@@ -11,8 +11,32 @@ public frame()
         setTitle("Snake Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(400, 50, 600, 600);
+        
+        
+         JPanel snakPanel =new JPanel(){
+        
+           protected void paintComponent(Graphics g) {
+           super.paintComponent(g);
 
-         JPanel panel = new JPanel() {
+           int x=1;
+           int n=3;
+            
+           for(int i=0;i<n;i++){
+           g.setColor(Color.green);
+           g.fillOval(100,100+x,20, 20); 
+           x=x+17;
+           }
+        }
+        
+        };  
+           snakPanel.setBackground(Color.BLACK);                    
+            add(snakPanel);
+            setVisible(true);    
+
+        
+         
+
+          JPanel apple = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
                      super.paintComponent(g);
@@ -29,10 +53,12 @@ public frame()
                     
                 }
             };
-            panel.setBackground(Color.BLACK);                    
-            add(panel);
-            setVisible(true);
+            apple.setBackground(Color.BLACK);                    
+            add(apple);
+            setVisible(true);  
 
+          
+         
     }
 
 }
