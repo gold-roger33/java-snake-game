@@ -2,6 +2,8 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 
@@ -11,12 +13,13 @@ public class frame extends JFrame implements ActionListener {
 static int UNIT_SIZE=25;
 static int GAME_UNIT=(600*600)/UNIT_SIZE;
 
-int X_ARRAY[]= new int[GAME_UNIT];
-int Y_ARRAY[]= new int[GAME_UNIT];
+final int X_ARRAY[]= new int[GAME_UNIT];
+final int Y_ARRAY[]= new int[GAME_UNIT];
 int X_apple, Y_apple;
 
 int body=6;
 char direction='U';
+boolean running=false;
 Timer timer;
 
 public frame()
@@ -41,16 +44,16 @@ public frame()
            }   
 
 
-
-           for(int i=1;i<body;i++){
+           
+           for(int i=0;i<body;i++){
 
             if(i==0){
-              g.setColor(Color.GREEN);
-              g.drawRect(X_ARRAY[i],Y_ARRAY[i],UNIT_SIZE,UNIT_SIZE);
+              g.setColor(Color.blue);
+              g.fillRect(X_ARRAY[i],Y_ARRAY[i],UNIT_SIZE,UNIT_SIZE);
             }
             else{
-              g.setColor(Color.green);
-              g.drawRect(X_ARRAY[i],Y_ARRAY[i],UNIT_SIZE,UNIT_SIZE);
+               g.setColor(Color.green);
+              g.fillRect(X_ARRAY[i],Y_ARRAY[i],UNIT_SIZE,UNIT_SIZE);
             }
            }        
 
@@ -65,38 +68,69 @@ public frame()
             add(snakPanel);
             setVisible(true); 
 
-            
-        timer = new Timer(100, this);
-        timer.start();
+
+        for (int i = 0; i < body; i++) {
+          X_ARRAY[i] = 250 - i * UNIT_SIZE;
+          Y_ARRAY[i] = 250;
+      }
 
         X_apple = Y_apple = 100; 
-          
+
+        addKeyListener(new KeyAdapter() {
+          @Override
+          public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+
+            if (key == KeyEvent.VK_UP && direction != 'D') {
+              direction = 'U';
+          } else if (key == KeyEvent.VK_DOWN && direction != 'U') {
+              direction = 'D';
+          } else if (key == KeyEvent.VK_LEFT && direction != 'R') {
+              direction = 'L';
+          } else if (key == KeyEvent.VK_RIGHT && direction != 'L') {
+              direction = 'R';
+              }
+          }
+      });
+      setFocusable(true);
+      requestFocusInWindow();
          
     }
+
+      public void startgame(){
+        randomapple();
+        running=true;
+        timer = new Timer(25, this);
+        timer.start();
+
+      }
+
        private void moveSnake() {
-      
+
+        for (int i = body-1; i > 0; i--) {
+        X_ARRAY[i] = X_ARRAY[i - 1];
+        Y_ARRAY[i] = Y_ARRAY[i - 1];
+      }
+
+
        switch (direction){
         case 'U':
-        Y_ARRAY[0] -= UNIT_SIZE;
+        Y_ARRAY[0] =Y_ARRAY[0] -UNIT_SIZE;
         break;
         
         case 'D':
-        Y_ARRAY[0] += UNIT_SIZE;
+        Y_ARRAY[0] =Y_ARRAY[0] + UNIT_SIZE;
         break;
 
         case 'R':
-        X_ARRAY[0] += UNIT_SIZE;
+        X_ARRAY[0] =X_ARRAY[0]+ UNIT_SIZE;
         break;
 
         case 'L':
-        X_ARRAY[0] -= UNIT_SIZE;
+        X_ARRAY[0] =X_ARRAY[0] - UNIT_SIZE;
         break;
 
         default:
-      }
-      for (int i = body - 1; i > 0; i--) {
-        X_ARRAY[i] = X_ARRAY[i - 1];
-        Y_ARRAY[i] = Y_ARRAY[i - 1];
       }
     }
      private void appleeaten(){
@@ -116,7 +150,7 @@ public frame()
           }
     
     
-     private void checkcollion(){
+     private void checkCollision(){
       for(int i=1;i<=body;i++){
 
       if(X_ARRAY[0]==X_ARRAY[i] && Y_ARRAY[0] ==Y_ARRAY[i] )
@@ -128,20 +162,24 @@ public frame()
         gameover();
       }
     }
+
     private void gameover(Graphics g){
       g.setColor(Color.WHITE);
       g.setFont(new Font("arial", Font.BOLD, 50));
       g.drawString("Game Over", 550, 300);
-
+      timer.stop();
     }
 
-    public void gamestart(){
-      moveSnake();
-    }  
+    
     @Override
     public void actionPerformed(ActionEvent e) {
+      if(running){
         moveSnake();
-        checkcollision();
+        randomapple();
+        checkCollision();
+        appleeaten();
+      }
         repaint(); // Repaint the panel
+  
     }
   }
