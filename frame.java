@@ -1,19 +1,23 @@
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
 
 
 
-public class frame extends JFrame  {
+public class frame extends JFrame implements ActionListener {
 
 static int UNIT_SIZE=25;
 static int GAME_UNIT=(600*600)/UNIT_SIZE;
 
 int X_ARRAY[]= new int[GAME_UNIT];
 int Y_ARRAY[]= new int[GAME_UNIT];
+int X_apple, Y_apple;
 
-int bodypart=6;
+int body=6;
 char direction='U';
+Timer timer;
 
 public frame()
       {
@@ -35,18 +39,10 @@ public frame()
            g.drawLine(i*UNIT_SIZE,0,i*UNIT_SIZE,600);  
            g.drawLine(0,i*UNIT_SIZE,600,i*UNIT_SIZE);  
            }   
-           
-
-           Random rx =new Random();
-           Random ry =new Random();
-        
-           int X_apple=rx.nextInt(25)*UNIT_SIZE;
-           int Y_apple=ry.nextInt(25)*UNIT_SIZE;
 
 
 
-
-           for(int i=1;i<bodypart;i++){
+           for(int i=1;i<body;i++){
 
             if(i==0){
               g.setColor(Color.GREEN);
@@ -69,12 +65,17 @@ public frame()
             add(snakPanel);
             setVisible(true); 
 
+            
+        timer = new Timer(100, this);
+        timer.start();
+
+        X_apple = Y_apple = 100; 
           
          
     }
-    private void moveSnake() {
+       private void moveSnake() {
       
-      switch (direction){
+       switch (direction){
         case 'U':
         Y_ARRAY[0] -= UNIT_SIZE;
         break;
@@ -93,38 +94,54 @@ public frame()
 
         default:
       }
-      for (int i = bodypart - 1; i > 0; i--) {
+      for (int i = body - 1; i > 0; i--) {
         X_ARRAY[i] = X_ARRAY[i - 1];
         Y_ARRAY[i] = Y_ARRAY[i - 1];
       }
+    }
+     private void appleeaten(){
 
+      if(X_ARRAY[0]== X_apple && Y_ARRAY[0]==Y_apple){
+
+        randomapple();
+        body++;
+      } 
+    }
+       private void randomapple()
+            {
+           Random rx =new Random();
+           Random ry =new Random();
+           X_apple=rx.nextInt(25)*UNIT_SIZE;
+           Y_apple=ry.nextInt(25)*UNIT_SIZE;
+          }
+    
+    
+     private void checkcollion(){
+      for(int i=1;i<=body;i++){
+
+      if(X_ARRAY[0]==X_ARRAY[i] && Y_ARRAY[0] ==Y_ARRAY[i] )
+      {
+        gameover();
+      }}
       
+      if (X_ARRAY[0] < 0 || X_ARRAY[0] >= 600 || Y_ARRAY[0] < 0 || Y_ARRAY[0] >= 600) {
+        gameover();
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
-    checkcollion(){
-
+    private void gameover(Graphics g){
+      g.setColor(Color.WHITE);
+      g.setFont(new Font("arial", Font.BOLD, 50));
+      g.drawString("Game Over", 550, 300);
 
     }
 
-    gamestart(){
-
-
-
+    public void gamestart(){
+      moveSnake();
+    }  
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        moveSnake();
+        checkcollision();
+        repaint(); // Repaint the panel
     }
-    gameover(){
-      
-    }
-*/
+  }
