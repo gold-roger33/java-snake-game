@@ -8,7 +8,6 @@ import java.util.Random;
 
 
 
-
 public class frame extends JFrame implements ActionListener {
 
 static final int UNIT_SIZE=25;
@@ -40,11 +39,11 @@ public frame() {
            public void paintComponent(Graphics g) {
            super.paintComponent(g);
     
-          /*     
+          /*      
            for(int i=0;i<600/UNIT_SIZE;i++){
            g.drawLine(i*UNIT_SIZE,0,i*UNIT_SIZE,600);  
            g.drawLine(0,i*UNIT_SIZE,600,i*UNIT_SIZE);  
-           } */   
+           } */  
 
            for(int i=0;i<body;i++){
             if(i==0){
